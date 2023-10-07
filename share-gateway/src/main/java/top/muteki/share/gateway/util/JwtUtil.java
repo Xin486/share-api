@@ -1,4 +1,4 @@
-package top.muteki.share.user.util;
+package top.muteki.share.gateway.util;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
