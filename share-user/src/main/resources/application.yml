@@ -2,3 +2,12 @@ server:
   port: 8001
   servlet:
     context-path: /user-service
+spring:
+  datasource:
+    url: jdbc:mysql://muteki.top:3306/user_center?characterEncoding=UTF8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: xzx233
+    driver-class-name: com.mysql.cj.jdbc.Driver
+logging:
+  level:
+    top.muteki.share.user.mapper: debug
