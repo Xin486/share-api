@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import top.muteki.share.user.domain.dto.LoginDTO;
 import top.muteki.share.user.domain.entity.User;
+import top.muteki.share.user.domain.resp.UserLoginResp;
 import top.muteki.share.user.resp.CommonResp;
 import top.muteki.share.user.service.UserService;
 
@@ -21,10 +22,10 @@ public class UserController {
         return commonResp;
     }
     @PostMapping("/login")
-    public CommonResp<User> login(@Valid @RequestBody LoginDTO loginDTO){
-        User user= userService.login(loginDTO);
-        CommonResp<User> commonResp =new CommonResp<>();
-        commonResp.setData(user);
+    public CommonResp<UserLoginResp> login(@Valid @RequestBody LoginDTO loginDTO){
+        UserLoginResp userLoginResp= userService.login(loginDTO);
+        CommonResp<UserLoginResp> commonResp =new CommonResp<>();
+        commonResp.setData(userLoginResp);
         return commonResp;
     }
     @PostMapping("/register")

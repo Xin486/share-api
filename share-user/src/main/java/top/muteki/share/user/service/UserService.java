@@ -1,16 +1,20 @@
 package top.muteki.share.user.service;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.jwt.JWTUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import top.muteki.share.user.domain.dto.LoginDTO;
 import top.muteki.share.user.domain.entity.User;
+import top.muteki.share.user.domain.resp.UserLoginResp;
 import top.muteki.share.user.exception.BusinessException;
 import top.muteki.share.user.exception.BusinessExceptionEnum;
 import top.muteki.share.user.mapper.UserMapper;
 import top.muteki.share.user.util.SnowUtil;
 
 import java.util.Date;
+import java.util.Map;
 
 @Service
 public class UserService {
@@ -19,7 +23,7 @@ public class UserService {
     public Long count(){
         return userMapper.selectCount(null);
     }
-    public User login(LoginDTO loginDTO){
+    public UserLoginResp login(LoginDTO loginDTO){
         User userDB= userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getPhone,loginDTO.getPhone()));
         if (userDB == null){
             throw new BusinessException(BusinessExceptionEnum.PHONE_NOT_EXIST);
@@ -27,7 +31,14 @@ public class UserService {
         if (!userDB.getPassword().equals(loginDTO.getPassword())){
             throw new BusinessException(BusinessExceptionEnum.PASSWORD_ERROR);
         }
-        return userDB;
+        UserLoginResp userLoginResp=UserLoginResp.builder()
+                .user(userDB)
+                 .build();
+        String key="Mutek1";
+        Map<String ,Object> map = BeanUtil.beanToMap(userLoginResp);
+        String token= JWTUtil.createToken(map,key.getBytes());
+        userLoginResp.setToken(token);
+        return userLoginResp;
     }
     public Long register(LoginDTO loginDTO){
         User userDB = userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getPhone,loginDTO.getPhone()));
