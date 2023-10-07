@@ -1,7 +1,8 @@
 package top.muteki.share.user.service;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.jwt.JWTUtil;
+
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import top.muteki.share.user.domain.resp.UserLoginResp;
 import top.muteki.share.user.exception.BusinessException;
 import top.muteki.share.user.exception.BusinessExceptionEnum;
 import top.muteki.share.user.mapper.UserMapper;
+import top.muteki.share.user.util.JwtUtil;
 import top.muteki.share.user.util.SnowUtil;
 
 import java.util.Date;
@@ -34,9 +36,10 @@ public class UserService {
         UserLoginResp userLoginResp=UserLoginResp.builder()
                 .user(userDB)
                  .build();
-        String key="Mutek1";
-        Map<String ,Object> map = BeanUtil.beanToMap(userLoginResp);
-        String token= JWTUtil.createToken(map,key.getBytes());
+//        String key="Mutek1";
+//        Map<String ,Object> map = BeanUtil.beanToMap(userLoginResp);
+//        String token= JWTUtil.createToken(map,key.getBytes());
+        String token= JwtUtil.createToken(userLoginResp.getUser().getId(),userLoginResp.getUser().getPhone());
         userLoginResp.setToken(token);
         return userLoginResp;
     }
