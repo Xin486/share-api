@@ -5,6 +5,8 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import top.muteki.share.user.domain.dto.LoginDTO;
 import top.muteki.share.user.domain.entity.User;
+import top.muteki.share.user.exception.BusinessException;
+import top.muteki.share.user.exception.BusinessExceptionEnum;
 import top.muteki.share.user.mapper.UserMapper;
 
 @Service
@@ -17,10 +19,10 @@ public class UserService {
     public User login(LoginDTO loginDTO){
         User userDB= userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getPhone,loginDTO.getPhone()));
         if (userDB == null){
-            throw new RuntimeException("手机号不存在");
+            throw new BusinessException(BusinessExceptionEnum.PHONE_NOT_EXIST);
         }
         if (!userDB.getPassword().equals(loginDTO.getPassword())){
-            throw new RuntimeException("密码错误");
+            throw new BusinessException(BusinessExceptionEnum.PASSWORD_ERROR);
         }
         return userDB;
     }
