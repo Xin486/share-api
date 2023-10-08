@@ -34,7 +34,7 @@ public class LogAspect {
     }
     @Before("controllerPointcut()")
     public void doBefore(JoinPoint joinPoint){
-        MDC.put("LOG_ID",System.currentTimeMillis()+ RandomUtil.randomString(3));
+//        MDC.put("LOG_ID",System.currentTimeMillis()+ RandomUtil.randomString(3));
         ServletRequestAttributes attributes=(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         assert attributes !=null;
         HttpServletRequest request= attributes.getRequest();
