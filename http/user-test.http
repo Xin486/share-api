@@ -49,3 +49,11 @@ Accept: application/json
 ###
 GET http://localhost:8000/content-service/share/list?title=并发编程
 Accept: application/json
+###
+GET http://localhost:8000/content-service/share/list
+Accept: application/json
+token: {{token}}
+###
+GET http://localhost:8000/content-service/share/list?pageNo=3&pageSize=2
+Accept: application/json
+token: {{token}}
