@@ -1,8 +1,5 @@
 package top.muteki.share.user.service;
 
-import cn.hutool.core.bean.BeanUtil;
-
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -16,7 +13,6 @@ import top.muteki.share.user.util.JwtUtil;
 import top.muteki.share.user.util.SnowUtil;
 
 import java.util.Date;
-import java.util.Map;
 
 @Service
 public class UserService {
@@ -61,5 +57,8 @@ public class UserService {
                 .build();
         userMapper.insert(savedUser);
         return savedUser.getId();
+    }
+    public User findById(Long userId){
+        return userMapper.selectById(userId);
     }
 }

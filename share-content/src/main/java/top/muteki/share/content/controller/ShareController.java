@@ -4,6 +4,7 @@ import cn.hutool.json.JSONObject;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import top.muteki.share.content.domain.ShareResp;
 import top.muteki.share.user.resp.CommonResp;
 import top.muteki.share.user.util.JwtUtil;
 import top.muteki.share.content.domain.entity.Notice;
@@ -59,7 +60,7 @@ public class ShareController {
      */
     private int getUserIdFromToken(String token) {
         log.info(">>>>>>>>>>> token" + token);
-        int userId = 0;
+        int userId = 1;
         String noToken = "no-token";
         if (!noToken.equals(token)) {
             JSONObject jsonObject = JwtUtil.getJSONObject(token);
@@ -69,5 +70,12 @@ public class ShareController {
             log.info("没有 token");
         }
         return userId;
+    }
+    @GetMapping("/{id}")
+    public CommonResp<ShareResp> getShareById(@PathVariable Long id){
+        ShareResp shareResp=shareService.findById(id);
+        CommonResp<ShareResp> commonResp=new CommonResp<>();
+        commonResp.setData(shareResp);
+        return commonResp;
     }
 }

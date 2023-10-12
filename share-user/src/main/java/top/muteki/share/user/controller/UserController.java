@@ -35,4 +35,11 @@ public class UserController {
         commonResp.setData(id);
         return commonResp;
     }
+    @GetMapping("/{id}")
+    public CommonResp<User> getUserById(@PathVariable Long id){
+        User user= userService.findById(id);
+        CommonResp<User> commonResp=new CommonResp<>();
+        commonResp.setData(user);
+        return commonResp;
+    }
 }
