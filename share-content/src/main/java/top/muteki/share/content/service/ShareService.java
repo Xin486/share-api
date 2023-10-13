@@ -136,5 +136,12 @@ public class ShareService {
         Page<Share> page = Page.of(pageNo,pageSize);
         return shareMapper.selectList(page,wrapper);
     }
+    public List<Share> querySharesNotYet(){
+        LambdaQueryWrapper<Share> wrapper=new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(Share::getId);
+        wrapper.eq(Share::getShowFlag,false)
+                .eq(Share::getAuditStatus,"NOT_YET");
+        return shareMapper.selectList(wrapper);
+    }
 
 }
