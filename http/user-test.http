@@ -114,3 +114,7 @@ token: {{token}}
   "cover": "https://tse1-mm.cn.bing.net/th/id/OIP-C.GtURKnUv3GgvsXNh8o8UqAHaHa?pid=ImgDet&rs=1",
   "summary": "资本峰勇闯天涯，揭秘印度手抓饭"
 }
+###
+GET http://localhost:8000/content-service/share/my-contribute?pageNo=2&pageSize=2
+Accept: application/json
+token: {{token}}

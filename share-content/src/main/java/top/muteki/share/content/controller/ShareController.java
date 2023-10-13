@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import top.muteki.share.content.domain.ShareResp;
 import top.muteki.share.content.domain.dto.ExchangeDTO;
 import top.muteki.share.content.domain.dto.ShareRequestDTO;
-import top.muteki.share.user.resp.CommonResp;
-import top.muteki.share.user.util.JwtUtil;
 import top.muteki.share.content.domain.entity.Notice;
 import top.muteki.share.content.domain.entity.Share;
 import top.muteki.share.content.service.NoticeService;
 import top.muteki.share.content.service.ShareService;
+import top.muteki.share.user.resp.CommonResp;
+import top.muteki.share.user.util.JwtUtil;
 
 import java.util.List;
 
@@ -94,5 +94,18 @@ public class ShareController {
         CommonResp<Integer> commonResp=new CommonResp<>();
         commonResp.setData(shareService.contribute(shareRequestDTO));
         return commonResp;
+    }
+    @GetMapping("/my-contribute")
+    public CommonResp<List<Share>> myContribute(
+            @RequestParam(required = false,defaultValue = "1") Integer pageNo,
+            @RequestParam(required = false,defaultValue = "3")Integer pageSize,
+            @RequestHeader(value = "token",required = false)String token){
+                if (pageSize >MAX){
+                    pageSize = MAX;
+                }
+                long userId=getUserIdFromToken(token);
+                CommonResp<List<Share>> commonResp=new CommonResp<>();
+                commonResp.setData(shareService.myContribute(pageNo,pageSize,userId));
+                return commonResp;
     }
 }
