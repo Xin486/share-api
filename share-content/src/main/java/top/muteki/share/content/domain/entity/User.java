@@ -13,5 +13,6 @@ public class User {
     private Long id;
     private String nickname;
     private String avatarUrl;
+    private Integer bonus;
 
 }

@@ -5,6 +5,8 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import top.muteki.share.content.domain.ShareResp;
+import top.muteki.share.content.domain.dto.ExchangeDTO;
+import top.muteki.share.content.domain.dto.ShareRequestDTO;
 import top.muteki.share.user.resp.CommonResp;
 import top.muteki.share.user.util.JwtUtil;
 import top.muteki.share.content.domain.entity.Notice;
@@ -76,6 +78,21 @@ public class ShareController {
         ShareResp shareResp=shareService.findById(id);
         CommonResp<ShareResp> commonResp=new CommonResp<>();
         commonResp.setData(shareResp);
+        return commonResp;
+    }
+    @PostMapping("/exchange")
+    public CommonResp<Share> exchange(@RequestBody ExchangeDTO exchangeDTO){
+        System.out.printf(String.valueOf(exchangeDTO));
+        CommonResp<Share> commonResp = new CommonResp<>();
+        commonResp.setData(shareService.exchange(exchangeDTO));
+        return commonResp;
+    }
+    @PostMapping("/contribute")
+    public CommonResp<Integer> contributeShare(@RequestBody ShareRequestDTO shareRequestDTO,@RequestHeader(value = "token",required = false)String token){
+        long userId=getUserIdFromToken(token);
+        shareRequestDTO.setUserId(userId);
+        CommonResp<Integer> commonResp=new CommonResp<>();
+        commonResp.setData(shareService.contribute(shareRequestDTO));
         return commonResp;
     }
 }

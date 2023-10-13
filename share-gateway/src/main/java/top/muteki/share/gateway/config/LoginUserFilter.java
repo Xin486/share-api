@@ -13,6 +13,7 @@ import top.muteki.share.gateway.util.JwtUtil;
 @Component
 @Slf4j
 public class LoginUserFilter implements Ordered, GlobalFilter {
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path=exchange.getRequest().getURI().getPath();

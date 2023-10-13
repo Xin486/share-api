@@ -2,12 +2,17 @@ package top.muteki.share.user.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import top.muteki.share.user.domain.dto.LoginDTO;
+import top.muteki.share.user.domain.dto.UserAddBonusMsgDTO;
+import top.muteki.share.user.domain.entity.BonusEventLog;
 import top.muteki.share.user.domain.entity.User;
 import top.muteki.share.user.domain.resp.UserLoginResp;
 import top.muteki.share.user.exception.BusinessException;
 import top.muteki.share.user.exception.BusinessExceptionEnum;
+import top.muteki.share.user.mapper.BonusEventLogMapper;
 import top.muteki.share.user.mapper.UserMapper;
 import top.muteki.share.user.util.JwtUtil;
 import top.muteki.share.user.util.SnowUtil;
@@ -15,9 +20,32 @@ import top.muteki.share.user.util.SnowUtil;
 import java.util.Date;
 
 @Service
+@Slf4j
 public class UserService {
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private BonusEventLogMapper bonusEventLogMapper;
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateBonus(UserAddBonusMsgDTO userAddBonusMsgDTO) {
+//        System.out.printf(userAddBonusMsgDTO);
+        Long userId = userAddBonusMsgDTO.getUserId();
+        Integer bonus = userAddBonusMsgDTO.getBonus();
+        User user = userMapper.selectById(userId);
+        user.setBonus(user.getBonus() + bonus);
+        userMapper.update(user, new QueryWrapper<User>().lambda().eq(User::getId, userId));
+        bonusEventLogMapper.insert(
+                BonusEventLog.builder()
+                        .userId(userId)
+                        .value(bonus)
+                        .description(userAddBonusMsgDTO.getDescription())
+                        .event(userAddBonusMsgDTO.getEvent())
+                        .createTime(new Date())
+                        .build()
+        );
+        log.info("积分添加完毕>>>>>>>>>");
+    }
     public Long count(){
         return userMapper.selectCount(null);
     }
@@ -61,4 +89,5 @@ public class UserService {
     public User findById(Long userId){
         return userMapper.selectById(userId);
     }
+
 }

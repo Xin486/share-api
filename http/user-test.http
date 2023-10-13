@@ -75,3 +75,42 @@ token: {{token}}
 GET http://localhost:8000/content-service/share/1
 Accept: application/json
 token: {{token}}
+###
+PUT http://localhost:8000/user-service/user/update-bonus
+content-type: application/json
+token: {{token}}
+
+{
+  "userId": 1,
+  "bonus": -11
+}
+###
+GET http://localhost:8000/user-service/user/1
+Accept: application/json
+token: {{token}}
+###
+POST http://localhost:8000/content-service/share/exchange
+content-type: application/json
+Accept: application/json
+token: {{token}}
+
+{
+  "userId": 2,
+  "shareId": 22
+}
+###
+POST http://localhost:8000/content-service/share/contribute
+content-type: application/json
+Accept: application/json
+token: {{token}}
+
+{
+  "userId": 2,
+  "author": "峰哥",
+  "title": "详解 Vue.js",
+  "isOriginal": 1,
+  "price": 500,
+  "downloadUrl": "https://www.bilibili.com",
+  "cover": "https://tse1-mm.cn.bing.net/th/id/OIP-C.GtURKnUv3GgvsXNh8o8UqAHaHa?pid=ImgDet&rs=1",
+  "summary": "资本峰勇闯天涯，揭秘印度手抓饭"
+}
