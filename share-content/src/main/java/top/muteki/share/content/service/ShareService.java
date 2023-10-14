@@ -4,14 +4,17 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.stereotype.Service;
 import top.muteki.share.content.domain.ShareResp;
 import top.muteki.share.content.domain.dto.ExchangeDTO;
+import top.muteki.share.content.domain.dto.ShareAuditDTO;
 import top.muteki.share.content.domain.dto.ShareRequestDTO;
 import top.muteki.share.content.domain.dto.UserAddBonusMsgDTO;
 import top.muteki.share.content.domain.entity.MidUserShare;
 import top.muteki.share.content.domain.entity.Share;
 import top.muteki.share.content.domain.entity.User;
+import top.muteki.share.content.domain.enums.AuditStatusEnum;
 import top.muteki.share.content.feign.UserService;
 import top.muteki.share.content.mapper.MidUserShareMapper;
 import top.muteki.share.content.mapper.ShareMapper;
@@ -19,6 +22,7 @@ import top.muteki.share.user.resp.CommonResp;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +40,8 @@ public class ShareService {
 
     @Resource
     private  UserService userService;
+    @Resource
+    RocketMQTemplate rocketMQTemplate;
 
     /**
      * 查询某个用户首页可见的资源列表
@@ -143,5 +149,34 @@ public class ShareService {
                 .eq(Share::getAuditStatus,"NOT_YET");
         return shareMapper.selectList(wrapper);
     }
-
+  public Share auditById(Long id, ShareAuditDTO shareAuditDTO){
+        Share share=shareMapper.selectById(id);
+        if (share == null){
+            throw new IllegalArgumentException("参数非法！该分享不存在");
+        }
+        if (!Objects.equals("NOT_YET",share.getAuditStatus())){
+            throw new IllegalArgumentException("参数非法！该分享已审核通过或审核不通过！");
+        }
+        share.setAuditStatus(shareAuditDTO.getAuditStatusEnum().toString());
+        share.setReason(shareAuditDTO.getReason());
+        share.setShowFlag(shareAuditDTO.getShowFlag());
+        LambdaQueryWrapper<Share> wrapper=new LambdaQueryWrapper<>();
+        wrapper.eq(Share::getId,id);
+        this.shareMapper.update(share,wrapper);
+        this.midUserShareMapper.insert(
+           MidUserShare.builder()
+                   .userId(share.getUserId())
+                   .shareId(id)
+                   .build()
+        );
+        if (AuditStatusEnum.PASS.equals(shareAuditDTO.getAuditStatusEnum())){
+            this.rocketMQTemplate.convertAndSend(
+                    "add-bonus",
+                    UserAddBonusMsgDTO.builder()
+                            .userId(share.getUserId())
+                            .bonus(50)
+                            .build());
+        }
+        return share;
+  }
 }

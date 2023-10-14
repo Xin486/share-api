@@ -44,3 +44,7 @@ spring:
 logging:
   level:
     top.muteki.share.user.mapper: debug
+rocketmq:
+  name-server:
+  producer:
+    group: test-group
