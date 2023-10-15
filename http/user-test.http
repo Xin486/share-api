@@ -106,7 +106,7 @@ token: {{token}}
 
 {
   "userId": 2,
-  "author": "峰哥1111",
+  "author": "峰哥1111334434",
   "title": "详解 Vue.js111",
   "isOriginal": 1,
   "price": 500,
@@ -123,7 +123,7 @@ GET http://localhost:8000/content-service/share/admin/list
 Accept: application/json
 token: {{token}}
 ###
-POST http://localhost:8000/content-service/share/admin/audit/1712810481588416513
+POST http://localhost:8000/content-service/share/admin/audit/1713474144607440898
 content-type: application/json
 Accept: application/json
 token: {{token}}

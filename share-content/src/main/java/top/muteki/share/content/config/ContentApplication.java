@@ -22,9 +22,5 @@ public class ContentApplication {
         log.info("启动成功！！");
         log.info("测试地址：http:///127.0.0.1:{}{}/hello",env.getProperty("server.port"),env.getProperty("server.servlet.context-path"));
     }
-    @Bean
-    public RocketMQTemplate rocketMQTemplate(){
-        return new RocketMQTemplate();
-    }
 }
 
