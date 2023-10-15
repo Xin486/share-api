@@ -177,17 +177,11 @@ public class ShareService {
         return share;
     }
 
-    public List<Share> myExchange(Long userId) {
+    public List<Share> getMyExchange(Long userId){
         LambdaQueryWrapper<MidUserShare> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(MidUserShare::getUserId, userId);
-        List<MidUserShare> shareList = midUserShareMapper.selectList(wrapper);
-        List<Long> list = shareList.stream().map(item -> item.getShareId()).collect(Collectors.toList());
-        LambdaQueryWrapper<Share> queryWrapper = new LambdaQueryWrapper<>();
-        List<Share> shares = new ArrayList<>();
-        for (Long shareId : list) {
-            Share share = shareMapper.selectById(shareId);
-            shares.add(share);
-        }
-        return shares;
+        wrapper.eq(MidUserShare::getUserId,userId);
+        wrapper.select(MidUserShare::getShareId);
+        List<MidUserShare> shares = midUserShareMapper.selectList(wrapper);
+        return shareMapper.selectBatchIds(shares.stream().map(item->item.getShareId()).collect(Collectors.toList()));
     }
 }

@@ -2,6 +2,7 @@ package top.muteki.share.user.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -96,11 +97,12 @@ public class UserService {
         return userMapper.selectById(userId);
     }
 
-    public List<BonusEventLog> getBonusEventLog(Long userId) {
+    public List<BonusEventLog> bonusLogs(Long id,int pageNo,int pageSize){
         LambdaQueryWrapper<BonusEventLog> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(BonusEventLog::getUserId, userId);
-        List<BonusEventLog> bonusEventLogList = bonusEventLogMapper.selectList(wrapper);
-        return bonusEventLogList;
+        wrapper.eq(BonusEventLog::getUserId,id);
+        wrapper.orderByDesc(BonusEventLog::getCreateTime);
+        Page<BonusEventLog> page = Page.of(pageNo,pageSize);
+        return bonusEventLogMapper.selectList(page,wrapper);
     }
 
 }

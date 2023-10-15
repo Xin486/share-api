@@ -113,14 +113,11 @@ public class ShareController {
         return commonResp;
     }
 
-    @GetMapping("/myExchange")
-    public CommonResp<List<Share>> myExchange(
-            @RequestHeader(value = "token", required = false) String token
-    ) {
-        long id = getUserIdFromToken(token);
-        List<Share> shares = shareService.myExchange(id);
+    @GetMapping("/exchanges/{id}")
+    public CommonResp<List<Share>> getMyExchanges(@PathVariable Long id){
+        List<Share> myExchange = shareService.getMyExchange(id);
         CommonResp<List<Share>> resp = new CommonResp<>();
-        resp.setData(shares);
+        resp.setData(myExchange);
         return resp;
     }
 

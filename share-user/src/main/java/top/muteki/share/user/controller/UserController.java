@@ -67,11 +67,13 @@ public class UserController {
         return commonResp;
     }
 
-    @GetMapping(value = "/getBonus")
-    public CommonResp<List<BonusEventLog>> getBonusEventLogs(@RequestParam Long id) {
-        List<BonusEventLog> list = userService.getBonusEventLog(+id);
-        CommonResp<List<BonusEventLog>> resp = new CommonResp<>();
-        resp.setData(list);
-        return resp;
+    //分页查询日志
+    @GetMapping("/logs/{id}/{pageNo}/{pageSize}")
+    public CommonResp<List<BonusEventLog>> getLogs(@PathVariable Long id,@PathVariable int pageNo,@PathVariable int pageSize){
+        System.out.println(id + "" + pageNo + "" + pageSize);
+        List<BonusEventLog> bonusEventLogs = userService.bonusLogs(id, pageNo, pageSize);
+        CommonResp<List<BonusEventLog>> commonResp = new CommonResp<>();
+        commonResp.setData(bonusEventLogs);
+        return commonResp;
     }
 }
