@@ -45,6 +45,6 @@ logging:
   level:
     top.muteki.share.user.mapper: debug
 rocketmq:
-  name-server:
+  name-server: 120.26.54.46:9876
   producer:
     group: test-group

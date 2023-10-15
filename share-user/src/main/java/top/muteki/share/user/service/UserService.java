@@ -1,5 +1,6 @@
 package top.muteki.share.user.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import top.muteki.share.user.util.JwtUtil;
 import top.muteki.share.user.util.SnowUtil;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -46,30 +48,33 @@ public class UserService {
         );
         log.info("积分添加完毕>>>>>>>>>");
     }
-    public Long count(){
+
+    public Long count() {
         return userMapper.selectCount(null);
     }
-    public UserLoginResp login(LoginDTO loginDTO){
-        User userDB= userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getPhone,loginDTO.getPhone()));
-        if (userDB == null){
+
+    public UserLoginResp login(LoginDTO loginDTO) {
+        User userDB = userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getPhone, loginDTO.getPhone()));
+        if (userDB == null) {
             throw new BusinessException(BusinessExceptionEnum.PHONE_NOT_EXIST);
         }
-        if (!userDB.getPassword().equals(loginDTO.getPassword())){
+        if (!userDB.getPassword().equals(loginDTO.getPassword())) {
             throw new BusinessException(BusinessExceptionEnum.PASSWORD_ERROR);
         }
-        UserLoginResp userLoginResp=UserLoginResp.builder()
+        UserLoginResp userLoginResp = UserLoginResp.builder()
                 .user(userDB)
-                 .build();
+                .build();
 //        String key="Mutek1";
 //        Map<String ,Object> map = BeanUtil.beanToMap(userLoginResp);
 //        String token= JWTUtil.createToken(map,key.getBytes());
-        String token= JwtUtil.createToken(userLoginResp.getUser().getId(),userLoginResp.getUser().getPhone());
+        String token = JwtUtil.createToken(userLoginResp.getUser().getId(), userLoginResp.getUser().getPhone());
         userLoginResp.setToken(token);
         return userLoginResp;
     }
-    public Long register(LoginDTO loginDTO){
-        User userDB = userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getPhone,loginDTO.getPhone()));
-        if (userDB !=null){
+
+    public Long register(LoginDTO loginDTO) {
+        User userDB = userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getPhone, loginDTO.getPhone()));
+        if (userDB != null) {
             throw new BusinessException(BusinessExceptionEnum.PHONE_EXIST);
         }
         User savedUser = User.builder()
@@ -86,8 +91,16 @@ public class UserService {
         userMapper.insert(savedUser);
         return savedUser.getId();
     }
-    public User findById(Long userId){
+
+    public User findById(Long userId) {
         return userMapper.selectById(userId);
+    }
+
+    public List<BonusEventLog> getBonusEventLog(Long userId) {
+        LambdaQueryWrapper<BonusEventLog> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(BonusEventLog::getUserId, userId);
+        List<BonusEventLog> bonusEventLogList = bonusEventLogMapper.selectList(wrapper);
+        return bonusEventLogList;
     }
 
 }

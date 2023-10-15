@@ -73,39 +73,55 @@ public class ShareController {
         }
         return userId;
     }
+
     @GetMapping("/{id}")
-    public CommonResp<ShareResp> getShareById(@PathVariable Long id){
-        ShareResp shareResp=shareService.findById(id);
-        CommonResp<ShareResp> commonResp=new CommonResp<>();
+    public CommonResp<ShareResp> getShareById(@PathVariable Long id) {
+        ShareResp shareResp = shareService.findById(id);
+        CommonResp<ShareResp> commonResp = new CommonResp<>();
         commonResp.setData(shareResp);
         return commonResp;
     }
+
     @PostMapping("/exchange")
-    public CommonResp<Share> exchange(@RequestBody ExchangeDTO exchangeDTO){
+    public CommonResp<Share> exchange(@RequestBody ExchangeDTO exchangeDTO) {
         System.out.printf(String.valueOf(exchangeDTO));
         CommonResp<Share> commonResp = new CommonResp<>();
         commonResp.setData(shareService.exchange(exchangeDTO));
         return commonResp;
     }
+
     @PostMapping("/contribute")
-    public CommonResp<Integer> contributeShare(@RequestBody ShareRequestDTO shareRequestDTO,@RequestHeader(value = "token",required = false)String token){
-        long userId=getUserIdFromToken(token);
+    public CommonResp<Integer> contributeShare(@RequestBody ShareRequestDTO shareRequestDTO, @RequestHeader(value = "token", required = false) String token) {
+        long userId = getUserIdFromToken(token);
         shareRequestDTO.setUserId(userId);
-        CommonResp<Integer> commonResp=new CommonResp<>();
+        CommonResp<Integer> commonResp = new CommonResp<>();
         commonResp.setData(shareService.contribute(shareRequestDTO));
         return commonResp;
     }
+
     @GetMapping("/my-contribute")
     public CommonResp<List<Share>> myContribute(
-            @RequestParam(required = false,defaultValue = "1") Integer pageNo,
-            @RequestParam(required = false,defaultValue = "3")Integer pageSize,
-            @RequestHeader(value = "token",required = false)String token){
-                if (pageSize >MAX){
-                    pageSize = MAX;
-                }
-                long userId=getUserIdFromToken(token);
-                CommonResp<List<Share>> commonResp=new CommonResp<>();
-                commonResp.setData(shareService.myContribute(pageNo,pageSize,userId));
-                return commonResp;
+            @RequestParam(required = false, defaultValue = "1") Integer pageNo,
+            @RequestParam(required = false, defaultValue = "3") Integer pageSize,
+            @RequestHeader(value = "token", required = false) String token) {
+        if (pageSize > MAX) {
+            pageSize = MAX;
+        }
+        long userId = getUserIdFromToken(token);
+        CommonResp<List<Share>> commonResp = new CommonResp<>();
+        commonResp.setData(shareService.myContribute(pageNo, pageSize, userId));
+        return commonResp;
     }
+
+    @GetMapping("/myExchange")
+    public CommonResp<List<Share>> myExchange(
+            @RequestHeader(value = "token", required = false) String token
+    ) {
+        long id = getUserIdFromToken(token);
+        List<Share> shares = shareService.myExchange(id);
+        CommonResp<List<Share>> resp = new CommonResp<>();
+        resp.setData(shares);
+        return resp;
+    }
+
 }

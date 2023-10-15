@@ -45,6 +45,6 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Shanghai
 rocketmq:
-  name-server:
+  name-server: 120.26.54.46:9876
   producer:
     group: test-group
